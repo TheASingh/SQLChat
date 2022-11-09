@@ -1,0 +1,27 @@
+.outerDivCenterAlign {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 90%;
+  width: 90%;
+  min-height: 93%; /* 7% height is for app-bar*/
+  height: 93%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0px;
+  overflow-x: hidden;
+}
+
+.tableContent {
+  -webkit-border-radius: 10px 10px 10px 10px;
+  border-radius: 10px 10px 10px 10px;
+  background: #fff;
+  padding: 30px;
+  width: 90%;
+  max-width: 450px;
+  position: relative;
+  padding: 0px;
+  box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+  text-align: center;
+}

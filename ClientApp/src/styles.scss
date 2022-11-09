@@ -1,0 +1,165 @@
+
+@use '@angular/material' as mat;
+@include mat.core();
+
+
+@import "themes/dark-theme";
+@import "themes/functions";
+
+
+.dark-theme {
+  /*@import "themes/dark-theme";*/
+  /*@include angular-material-theme($dark-theme);*/
+  /*@include mat.core-theme($dark-theme);
+  @include mat.button-theme($dark-theme);*/
+  @include generate-theme-vars($dark-theme);
+}
+
+/*.light-theme {
+  @import "themes/light-theme";
+  @include angular-material-theme($light-theme);
+  @include generate-theme-vars($light-theme);
+}*/
+
+
+// log in screen or Home
+.logInHeading {
+  @include generate-theme-vars($dark-theme); // it is required
+  color: var(--primary-color, blue);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+  display: inline-block;
+  margin: 30px 0px 20px 0px;
+}
+
+
+input[type=text] {
+  @include generate-theme-vars($dark-theme); // it is required
+  background-color: #f6f6f6;
+  border: 2px solid #f6f6f6;
+  border-radius: 5px;
+  color: #0d0d0d;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 5px;
+  width: 85%;
+  transition: all 0.5s ease-in-out;
+}
+
+input[type=text]:focus {
+  background-color: #fff;
+  border-bottom: 2px solid var(--primary-color, blue);
+}
+
+input[type=text]:focus-visible {
+  outline: none;
+}
+
+/* Simple CSS3 Fade-in Animation */
+.underlineHover:after {
+  @include generate-theme-vars($dark-theme); // it is required
+  display: block;
+  left: 0;
+  bottom: -10px;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color, blue); // it is for underlining
+  content: "";
+  transition: width 0.2s;
+}
+
+.underlineHover:hover {
+  color: #0d0d0d;
+}
+
+.underlineHover:hover:after {
+  width: 100%;
+}
+
+// roomlist
+.tableHeading {
+  @include generate-theme-vars($dark-theme); // it is required
+  color: var(--primary-color, blue);
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.mat-row:hover .mat-cell {
+  @include generate-theme-vars($dark-theme); // it is required
+  /*border-color: currentColor;
+  color:yellow;*/
+  background-color: var(--primary-color, blue);
+  color: white;
+}
+
+
+//chatroom
+
+
+.chat-message-left {
+  color: white;
+  margin: 2px 2px 0px 2px;
+  padding: 0px 10px 0px 10px;
+  font-size: 18px;
+  position: relative;
+  background: #78909C;
+  border-top-right-radius: .4em;
+  border-bottom-left-radius: .4em;
+  border-bottom-right-radius: .4em;
+  text-align: left;
+  margin-right: auto;
+  margin-left: 10px;
+  width: fit-content;
+  max-width: 70%;
+}
+
+
+.chat-message-right {
+  @include generate-theme-vars($dark-theme); // it is required
+  color: white;
+  margin: 2px 2px 0px 0px;
+  padding: 5px 10px 0px 10px;
+  font-size: 18px;
+  position: relative;
+  background: var(--primary-color, blue);
+  border-top-left-radius: .4em;
+  border-bottom-left-radius: .4em;
+  border-bottom-right-radius: .4em;
+  text-align: right;
+  margin-left: auto;
+  margin-right: 10px;
+  width: fit-content;
+  max-width: 60%;
+}
+
+.app-toolbar {
+  position: sticky;
+  position: -webkit-sticky; /* For macOS/iOS Safari */
+  top: 0; /* Sets the sticky toolbar to be on top */
+  z-index: 1000; /* Ensure that your app's content doesn't overlap the toolbar */
+  min-width: 100%;
+  left: 0;
+  min-height: 7%;
+  height: 7%;
+}
+
+.appbar-space {
+  flex: 1 1 auto;
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow: hidden; /* Hide scrollbars */
+}

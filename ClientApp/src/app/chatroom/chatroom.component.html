@@ -1,0 +1,48 @@
+<mat-toolbar class="app-toolbar" color="primary">
+  <mat-icon class="mat-icon-back" (click)="onBackButtonClicked()">keyboard_backspace</mat-icon>
+  <span>The Chat Application</span>
+  <span class="appbar-space"></span>
+  <mat-icon class="mat-icon-logout" (click)="onLogOut()">logout</mat-icon>
+  <!--<a mat-button (click)="onLogOut()"> Log Out </a>-->
+
+</mat-toolbar>
+
+<div class="chat-body" #chatcontent [scrollTop]="scrollToTop">
+  <div *ngFor="let dataitem of chatDataToDisplayList">
+
+    <ng-template [ngIf]="dataitem.userName != loggedInUserName" [ngIfElse]="elseBlock">
+      <div class="chat-message-left">
+        <div class="chat-username-left">
+          {{dataitem.userName}}
+        </div>
+        {{dataitem.message}}
+        <div class="chat-timestamp-left">
+          {{dataitem.messageDateTime}}
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+      <div class="chat-message-right">
+        {{dataitem.message}}
+        <div class="chat-timestamp-right">
+          {{dataitem.messageDateTime}}
+        </div>
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+
+
+
+
+<footer class="sticky-footer">
+  <form #chatform="ngForm" class="message-box-form" (ngSubmit)="onFormSubmit(chatform.value)">
+    <input #messageField type="text" class="message-field" name="message" placeholder="Type your message here" autocomplete="off" ngModel>
+    <button mat-icon-button>
+      <mat-icon class="mat-icon-send" color="primary">send</mat-icon>
+    </button>
+  </form>
+</footer>
+
+

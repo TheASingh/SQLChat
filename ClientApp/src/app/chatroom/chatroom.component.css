@@ -1,0 +1,93 @@
+
+footer.sticky-footer {
+  position: fixed;
+  bottom: 0;
+  min-width: 100%;
+  width: 100%;
+  padding-bottom: 5px;
+  background-color: #ffffff;
+  /*border-top: solid 1px #efefef;*/
+  text-align: center;
+  height: 8%;
+  min-height: 8%;
+  background: whitesmoke;
+  /*margin-top: -70px;*/
+}
+
+
+.chat-body {
+  overflow: scroll;
+  min-height: 84%;
+  height: 84%;
+  padding-bottom: 10px;
+  overflow-x: hidden;
+  background: whitesmoke;
+}
+
+
+
+
+.message-box-form {
+  background: whitesmoke;
+  width: 100%;
+  min-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.message-field {
+  height: 80%;
+  width: 50%;
+  background-color: #fff;
+  margin-left: 0px;
+}
+
+
+mat-icon {
+  transform: scale(1.5);
+}
+
+.mat-icon-back {
+  transform: scale(1);
+  margin-right: 25px;
+}
+
+.mat-icon-logout {
+  transform: scale(1);
+  margin-right: 5px;
+}
+
+.mat-icon-send {
+  left: 0;
+  padding-left: 0px;
+  margin-left: 10px;
+  padding-top: 0px;
+  top: 40%;
+  position: absolute;
+  transform: translateY(-50%) scale(1.5);
+}
+
+
+.chat-username-left {
+  color: white;
+  font-size: 8px;
+  position: relative;
+}
+
+.chat-username-right {
+  color: white;
+  font-size: 8px;
+  position: relative;
+}
+
+.chat-timestamp-left {
+  color: white;
+  font-size: 8px;
+  position: relative;
+}
+
+.chat-timestamp-right {
+  color: white;
+  font-size: 8px;
+  position: relative;
+}
