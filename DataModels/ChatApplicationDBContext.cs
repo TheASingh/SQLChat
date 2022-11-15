@@ -43,6 +43,8 @@ namespace ChatApplicationWithSQLServer.DataModels
                 entity.Property(e => e.UserName).HasColumnName("UserName");
                 entity.Property(e => e.Email).HasColumnName("Email");
                 entity.Property(e => e.Password).HasColumnName("Password");
+                entity.Property(e => e.IsActive).HasColumnName("IsActive");
+                entity.Property(e => e.ActivationToken).HasColumnName("ActivationToken");
             });
 
             modelBuilder.Entity<Room>(entity =>

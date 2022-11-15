@@ -16,6 +16,7 @@
 <div id="formContent" *ngIf="!showLogInWindow">
   <span class="logInHeading"> Register as a new user</span>
 <form #Registerform="ngForm" (ngSubmit)="onRegisterClick(Registerform.value)">
+  <input type="text" id="username" name="usernameForRegistration" placeholder="Username" ngModel>
   <input type="text" id="login" name="emailForRegistration" placeholder="Email" ngModel>
   <input type="text" id="password" name="passwordForRegistration" placeholder="Password" ngModel>
   <button class="btn" mat-raised-button color="primary">Register </button>

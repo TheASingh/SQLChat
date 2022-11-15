@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { HttpClient, HttpParams, JsonpClientBackend } from '@angular/common/http';
+import { environment } from '../environments/environment';
+import { FailedToNegotiateWithServerError } from '@microsoft/signalr/dist/esm/Errors';
 
 
 @Injectable({
@@ -14,12 +16,19 @@ export class ChatapplicationServiceService {
 
   readonly logIn_endpoint = "user/login";
   readonly createUser_endpoint = "user/createuser";
+  readonly verifyandapprovetoken_endpoint = "user/verifyandapprovetoken";
+  readonly sendresetpasswordemail_endpoint = "user/sendresetpasswordemail";
+  readonly resetpassword_endpoint = "user/resetpassword";
+
   readonly getRooms_endpoint = "room/getrooms";
   readonly createRoom_endpoint = "room/createroom";
+
   readonly sendMessage_endpoint = "chat/sendmessage";
   readonly getMessages_endpoint = "chat/getmessages";
+
   chatRoomToOpen = null;
   baseApiUrl = "";
+  baseUrlOfProject = "";
 
   isUserSignedIn() {
     if (localStorage.getItem('currentUser')) {
@@ -30,32 +39,60 @@ export class ChatapplicationServiceService {
 
   constructor(private router: Router, private http: HttpClient, @Inject('BASE_URL') baseUrl: string, public _snackBar: MatSnackBar) {
     this.baseApiUrl = baseUrl;
+    this.baseUrlOfProject = baseUrl;
+
+    if (environment.production == false) {
+      this.baseUrlOfProject = environment.projectUrlFrontEnd;
+    }
 
   }
 
-  signup(email: string, password: string) {
-    var urlToLogin = this.baseApiUrl + this.createUser_endpoint;
-    let parameters = new HttpParams().set("username", "test")
-      .set("email", email)
-      .set("password", password);
+  signup(username: string, email: string, password: string) {
+    var urlToCreateUser = this.baseApiUrl + this.createUser_endpoint;
 
+    const body = {
+      username: username,
+      email: email,
+      password: password,
+      projectBaseUrl: this.baseUrlOfProject
+    };
 
-    var result = this.http.post(urlToLogin, { params: parameters });
-    var i = 7;
+    this.http.post<any>(urlToCreateUser, body).subscribe(result => {
+
+      // Calling the echo method to invoke SignalR method
+      if (result.success) {
+        this._snackBar.open("Please verify your email, a verification email has been sent to your email address: " + email, "Ok")
+      }
+      else {
+        this._snackBar.open(result.error, "Ok")
+      }
+
+    });
   }
 
   login(email: string, password: string) {
     var urlToLogin = this.baseApiUrl + this.logIn_endpoint;
     let parameters = new HttpParams().set("email", email).set("password", password); //Create new HttpParams
 
-    this.http.get<any>(urlToLogin, { params: parameters }).subscribe(data => {
-      localStorage.setItem('CurrentUser', JSON.stringify(data))
+    this.http.get<any>(urlToLogin, { params: parameters }).subscribe(result => {
 
-      this.router.navigate(['roomlist']);
-      this._snackBar.open("Signed in as " + email, "Ok")
-    })  
+      if (result.success) {
+        localStorage.setItem('CurrentUser', JSON.stringify(result.data))
 
-   
+        this.router.navigate(['roomlist']);
+        this._snackBar.open("Signed in as " + email, "Ok")
+      }
+      else {
+        if (result.error) {
+          this._snackBar.open(result.error, "Ok")
+        }
+        else {
+          this._snackBar.open("Invalid email or password", "Ok")
+        }
+      }
+    })
+
+
   }
 
   verifyEmail(user: any) {
@@ -71,17 +108,41 @@ export class ChatapplicationServiceService {
   }
 
   forgotPassword(email: string) {
-    //if (email) {
-    //  sendPasswordResetEmail(getAuth(), email)
-    //    .then((response) => {
-    //      console.log('')
-    //      this._snackBar.open("Password reset email has been sent, Please check your inbox including spam folder.", "Ok");
-    //    })
-    //    .catch((error) => {
-    //      const errorCode = error.code;
-    //      const errorMessage = error.message;
-    //      this._snackBar.open("There is some error sending the password reset email. Please enter the correct email.", "Ok");
-    //    });
-    //}
+    if (email) {
+
+      var urlToSendForgotPasswordEmail = this.baseApiUrl + this.sendresetpasswordemail_endpoint;
+      let parameters = new HttpParams().set("email", email).set("projectBaseUrl", this.baseUrlOfProject);
+
+      this.http.get<any>(urlToSendForgotPasswordEmail, { params: parameters }).subscribe(result => {
+        if (result.success) {
+          this._snackBar.open("Reset password email has been sent to your account: " + email, "Ok");
+        }
+        else {
+          this._snackBar.open(result.error);
+        }
+      })
+
+    }
+  }
+
+  resetPassword(token: string, password: string) {
+    var urlToCreateUser = this.baseApiUrl + this.resetpassword_endpoint;
+
+    const body = {
+      token: token,
+      password: password
+    };
+
+    this.http.post<any>(urlToCreateUser, body).subscribe(result => {
+
+      // Calling the echo method to invoke SignalR method
+      if (result.success) {
+        this._snackBar.open("Password has been reset successfully, please proceed with login", "Ok");
+      }
+      else {
+        this._snackBar.open(result.error, "Ok")
+      }
+
+    });
   }
 }

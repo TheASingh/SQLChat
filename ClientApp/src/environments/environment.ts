@@ -4,7 +4,10 @@
 
 export const environment = {
   production: false,
-  apiUrl: "https://localhost:44378/"
+  apiUrl: "https://localhost:44378/",
+
+  //This is for email-verification functionality
+  projectUrlFrontEnd: "https://localhost:44478/#/",
 };
 
 /*

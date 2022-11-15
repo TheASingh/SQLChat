@@ -5,6 +5,8 @@ import { ChatroomComponent } from './chatroom/chatroom.component'
 import { HomeComponent } from './home/home.component'
 import { RoomlistComponent } from './roomlist/roomlist.component'
 import { ChatauthguardGuard } from './chatauthguard.guard';
+import { VerifyemailComponent } from './verifyemail/verifyemail.component';
+import { ForgotpassworduserentryComponent } from './forgotpassworduserentry/forgotpassworduserentry.component';
 
 const routes: Routes = [
   {
@@ -21,6 +23,15 @@ const routes: Routes = [
     path: 'chatroom',
     component: ChatroomComponent,
     canActivate: [ChatauthguardGuard]
+  },
+
+  {
+    path: 'verifyemail/:token',
+    component: VerifyemailComponent
+  },
+  {
+    path: 'resetpassword/:token',
+    component: ForgotpassworduserentryComponent
   }
 
   //{

@@ -4,7 +4,15 @@ namespace ChatApplicationWithSQLServer.Interfaces
 {
     public interface IUserRepository
     {
-        bool CreateUser(string username, string email, string password);
-        UserModel LogIn(string email, string password);
-    }
+		ApiResult CreateUser(string username, string email, string password, string projectBaseUrl);
+
+		ApiResult LogIn(string email, string password);
+
+		ApiResult VerifyAndApproveToken(string token);
+
+		ApiResult SendEmailToResetPassword(string toEmailAddress, string projectBaseUrl);
+
+		ApiResult ResetPassword(string token, string password);
+
+	}
 }

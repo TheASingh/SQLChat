@@ -22,7 +22,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatDialogModule } from '@angular/material/dialog';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { VerifyemailComponent } from './verifyemail/verifyemail.component';
+import { ForgotpassworduserentryComponent } from './forgotpassworduserentry/forgotpassworduserentry.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,9 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     HomeComponent,
     RoomlistComponent,
     ChatroomComponent,
-    ForgotpasswordComponent
+    ForgotpasswordComponent,
+    VerifyemailComponent,
+    ForgotpassworduserentryComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -50,7 +55,8 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     MatProgressSpinnerModule,
     MatSortModule,
     MatSnackBarModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatDialogModule
   ],
   //providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
   providers: [],
