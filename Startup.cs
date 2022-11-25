@@ -31,6 +31,7 @@ namespace ChatApplicationWithSQLServer
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IUserRoomRepository, UserRoomRepository>();
 
             services.AddMvcCore().AddApiExplorer();
             services.AddSignalR();

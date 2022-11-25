@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, AfterViewChecked, OnDestroy, AfterContentInit, AfterViewInit, AfterContentChecked } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpTransportType, HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
@@ -12,15 +12,16 @@ import { ChatapplicationServiceService } from '../chatapplicationservice.service
   templateUrl: './chatroom.component.html',
   styleUrls: ['./chatroom.component.css']
 })
-export class ChatroomComponent implements OnInit {
+export class ChatroomComponent implements OnInit, OnDestroy, AfterContentInit, AfterViewInit {
 
   loggedInUserName: string = ''
   loggedInUserId = 0;;
   month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   chatDataToDisplayList: any = [];
   selectedRoomId: string = '';
+  numberOfUnseenMessages: number = 0;
 
-  private hubConnection: HubConnection | undefined;
+  //private hubConnection: HubConnection | undefined;
 
 
   constructor(private router: Router,
@@ -53,6 +54,29 @@ export class ChatroomComponent implements OnInit {
       this.loggedInUserId = JSON.parse(localStorage.CurrentUser).userId;
     }
   }
+  //ngAfterContentChecked(): void {
+  //  var ui = 5;
+  //  var it = document.getElementById('wave12');
+  //  console.log("ngAfterContentChecked", it);
+  //  var uii = 4;
+  //}
+  //ngAfterViewChecked(): void {
+  //  var ui = 5;
+  //  var it = document.getElementById('wave12');
+  //  console.log("ngAfterViewChecked", it);
+
+  //  var uii = 4;
+  //}
+
+  ngAfterViewInit(): void {
+
+
+  }
+
+
+  ngAfterContentInit(): void {
+
+  }
 
 
 
@@ -73,28 +97,40 @@ export class ChatroomComponent implements OnInit {
       url = environment.apiUrl + 'echo';
     }
 
-    this.hubConnection = new HubConnectionBuilder().withUrl(url, {
-      skipNegotiation: true,
-      transport: HttpTransportType.WebSockets
-    }
-    ).build();
+    // -----------------------------------------------------------------hubConnection for SignalR-------------------------------------------------------------------------------------
+    //this.hubConnection = new HubConnectionBuilder().withUrl(url, {
+    //  skipNegotiation: true,
+    //  transport: HttpTransportType.WebSockets
+    //}
+    //).build();
 
-    this.hubConnection.start()
-      .then(() => {
-        console.log("Connection started")
-      })
-      .catch(err => {
-        console.error(err);
-      })
+    //this.hubConnection.start()
+    //  .then(() => {
+    //    console.log("Connection started")
+    //  })
+    //  .catch(err => {
+    //    console.error(err);
+    //  })
 
-    this.hubConnection.on("SendToHomeController", (data) => {
+    // using ! operator to let compiler know that the object is not undefined
+    this.authService.hubConnection!.on("SendToHomeController", (data) => {
       //this.messages.push(msg);
       this.createChatDataList(data);
     });
+    // -----------------------------------------------------------------hubConnection for SignalR-------------------------------------------------------------------------------------
 
 
     this.getChatMessages();
+
+    // Refreshing the lastSeen in database
+    this.saveUserAndRoomDetail()
   }
+
+
+  ngOnDestroy(): void {
+    this.saveUserAndRoomDetail();
+  }
+
 
   onFormSubmit(chatform: any) {
     if (chatform.message != '') {
@@ -107,8 +143,8 @@ export class ChatroomComponent implements OnInit {
       this.http.post<any>(urlToSendMessage, body).subscribe(data => {
 
         // Calling the echo method to invoke SignalR method
-        if (this.hubConnection != undefined) {
-          this.hubConnection.invoke("Echo", this.selectedRoomId);
+        if (this.authService.hubConnection != undefined) {
+          this.authService.hubConnection.invoke("Echo", this.selectedRoomId);
         }
         else {
           console.log("Hub Connection undefined")
@@ -122,14 +158,11 @@ export class ChatroomComponent implements OnInit {
       // This is to clear the message field in the form
       this.messageField.nativeElement.value = '';
     }
-
-
-
   }
 
   getChatMessages() {
     var urlToGetMessages = this.authService.baseApiUrl + this.authService.getMessages_endpoint;
-    let parameters = new HttpParams().set("roomId", this.selectedRoomId); //Create new HttpParams
+    let parameters = new HttpParams().set("roomId", this.selectedRoomId).set("userId", this.loggedInUserId); //Create new HttpParams
     this.http.get<any>(urlToGetMessages, { params: parameters }).subscribe(data => {
 
       this.createChatDataList(data);
@@ -139,30 +172,57 @@ export class ChatroomComponent implements OnInit {
   }
 
   createChatDataList(rawChatData: any) {
-    if (rawChatData) {
-      this.chatDataToDisplayList = [];
-      var todayDate = new Date();
-      var messageDateTimeToSet;
-      for (let i = 0; i < rawChatData.length; i++) {
-        var datetime = new Date(rawChatData[i].timestamp);
-        var amOrPm = this.getAMorPM(datetime.getHours());
+    var firstUnreadMessageFlag = false;   // first flag
+    var isFirstUnreadMessageFound = false; // second flag to validate first flag
+    var indexOfFirstUnreadMessage = 0;
 
-        var messageTimeToSet = this.addZero(this.getTimeByAmPM(datetime.getHours())) + ":" + this.addZero(datetime.getMinutes()) + amOrPm;;
-        if (datetime.getDate() == todayDate.getDate() && datetime.getMonth() == todayDate.getMonth() && datetime.getFullYear() == todayDate.getFullYear()) {
-          messageDateTimeToSet = messageTimeToSet;
+    if (rawChatData) {
+      if (rawChatData.roomId == this.selectedRoomId) {
+        this.chatDataToDisplayList = [];
+        var todayDate = new Date();
+        var messageDateTimeToSet;
+
+        var messageList = rawChatData.messages;
+        for (let i = 0; i < messageList.length; i++) {
+          var datetime = new Date(messageList[i].timestamp);
+          var amOrPm = this.getAMorPM(datetime.getHours());
+
+          if (rawChatData.loggedInUserLastSeen < messageList[i].timestamp) {
+
+            this.numberOfUnseenMessages++;
+            if (!isFirstUnreadMessageFound) {
+              firstUnreadMessageFlag = true;
+              isFirstUnreadMessageFound = true;
+              indexOfFirstUnreadMessage = i;
+            }
+          }
+
+          var messageTimeToSet = this.addZero(this.getTimeByAmPM(datetime.getHours())) + ":" + this.addZero(datetime.getMinutes()) + amOrPm;;
+          if (datetime.getDate() == todayDate.getDate() && datetime.getMonth() == todayDate.getMonth() && datetime.getFullYear() == todayDate.getFullYear()) {
+            messageDateTimeToSet = messageTimeToSet;
+          }
+          else {
+            messageDateTimeToSet = this.month[datetime.getMonth()] + " " + datetime.getDate() + ", " + messageTimeToSet;
+          }
+          this.chatDataToDisplayList.push({
+            email: messageList[i].userName,
+            userName: messageList[i].userName,
+            message: messageList[i].message,
+            messageDateTime: messageDateTimeToSet,
+            isFirstUnreadMessage: firstUnreadMessageFlag
+          })
+
+          //resetting the flag
+          firstUnreadMessageFlag = false;
+        }
+
+        if (!isFirstUnreadMessageFound) {
+          this.scrollToLastItem();
         }
         else {
-          messageDateTimeToSet = this.month[datetime.getMonth()] + " " + datetime.getDate() + ", " + messageTimeToSet;
+          this.scrollToSpecificDiv(indexOfFirstUnreadMessage);
         }
-        this.chatDataToDisplayList.push({
-          email: rawChatData[i].userName,
-          userName: rawChatData[i].userName,
-          message: rawChatData[i].message,
-          messageDateTime: messageDateTimeToSet
-        })
       }
-
-      this.scrollToLastItem();
     }
   }
 
@@ -194,6 +254,40 @@ export class ChatroomComponent implements OnInit {
   }
 
   scrollToLastItem() {
+
     setTimeout(() => this.scrollToTop = this.chatcontent.nativeElement.scrollHeight, 100);
+
+  }
+
+  scrollToSpecificDiv(index:number) {
+    setTimeout(() => {
+
+      if (document.getElementById('wave' + (index - 1)) != null) {
+        //using ! operator to make compiler know that it is not null
+        document.getElementById('wave' + (index - 1))!.scrollIntoView()
+      }
+      else if (document.getElementById('wave'+index) != null) {
+
+        //using ! operator to make compiler know that it is not null
+        document.getElementById('wave' + index)!.scrollIntoView()
+      }
+    },
+      500);
+
+    console.log('scrolled to ' + index);
+  }
+
+  saveUserAndRoomDetail() {
+    var urlToGetRooms = this.authService.baseApiUrl + this.authService.updatelastseendt_endpoint;
+
+    const body = {
+      roomId: this.selectedRoomId,
+      userId: this.loggedInUserId,
+    };
+
+    this.http.post<any>(urlToGetRooms, body).subscribe(res => {
+      console.log(res);
+    })
+
   }
 }

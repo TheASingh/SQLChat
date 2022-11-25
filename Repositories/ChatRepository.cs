@@ -1,6 +1,7 @@
 ﻿using ChatApplicationWithSQLServer.DataModels;
 using ChatApplicationWithSQLServer.Interfaces;
 using ChatApplicationWithSQLServer.Models;
+using System.Runtime.CompilerServices;
 
 namespace ChatApplicationWithSQLServer.Repositories
 {
@@ -32,13 +33,23 @@ namespace ChatApplicationWithSQLServer.Repositories
 			}
 		}
 
-		public List<ChatModel> GetMessages(int roomId)
+		public ChatModel GetMessages(int roomId, int? userId = null)
 		{
-			var chatMessages = new List<ChatModel>();
+			var chatModel = new ChatModel();
+			var listMessageDetail = new List<MessageDetail>();
 			try
 			{
-
-				chatMessages = _context.Chat.Where(y => y.RoomId == roomId)
+				if (userId != null)
+				{
+					chatModel.LoggedInUserId = userId;
+					if (_context.UsersRoom.Any(x => x.UserId == userId && x.RoomId == roomId))
+					{
+						chatModel.LoggedInUserLastSeen = _context.UsersRoom
+														.Where(x => x.UserId == userId && x.RoomId == roomId)
+														.Max(z => z.LastSeenDT);
+					}
+				}
+				listMessageDetail = _context.Chat.Where(y => y.RoomId == roomId)
 										.Join(_context.User,
 												C => C.UserId,
 												U => U.UserId,
@@ -48,20 +59,22 @@ namespace ChatApplicationWithSQLServer.Repositories
 													U.UserName
 												}
 										)
-										.Select(x => new ChatModel()
+										.Select(x => new MessageDetail()
 										{
 											Id = x.Chat.Id,
-											RoomId = x.Chat.RoomId,
 											UserName = x.UserName,
 											Timestamp = x.Chat.Timestamp,
 											Message = x.Chat.Message
 										}).ToList();
+
+				chatModel.RoomId = roomId;
+				chatModel.Messages = listMessageDetail;
 			}
 			catch (Exception e)
 			{
 
 			}
-			return chatMessages;
+			return chatModel;
 		}
 
 

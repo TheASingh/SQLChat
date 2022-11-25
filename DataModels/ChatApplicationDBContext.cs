@@ -65,9 +65,21 @@ namespace ChatApplicationWithSQLServer.DataModels
                 entity.Property(e => e.Message).HasColumnName("Message");
                 entity.Property(e => e.Timestamp).HasColumnName("Timestamp");
             });
+            
+            modelBuilder.Entity<UsersRoom>(entity =>
+            {
+                entity.ToTable("USERS_ROOM");
+                entity.HasKey(e => e.IndexId);
+                entity.Property(e => e.IndexId).HasColumnName("IndexId");
+                entity.Property(e => e.RoomId).HasColumnName("RoomId");
+                entity.Property(e => e.UserId).HasColumnName("UserId");
+                entity.Property(e => e.LastSeenDT).HasColumnName("LastSeenDT");
+                
+            });
         }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<Room> Room { get; set; }
         public virtual DbSet<Chat> Chat { get; set; }
+        public virtual DbSet<UsersRoom> UsersRoom { get; set; }
     }
 }

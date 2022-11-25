@@ -7,11 +7,14 @@
 
 </mat-toolbar>
 
-<div class="chat-body" #chatcontent [scrollTop]="scrollToTop">
-  <div *ngFor="let dataitem of chatDataToDisplayList">
-
+<div class="chat-body" #chatcontent [scrollTop]="scrollToTop" id="parentdiv">
+  <div *ngFor="let dataitem of chatDataToDisplayList; let i = index">
+    <div *ngIf="dataitem.isFirstUnreadMessage">
+      <div class="unread-messages-border"></div>
+      <div class="unread-messages-description"> {{numberOfUnseenMessages}} unread message(s)</div>
+    </div>
     <ng-template [ngIf]="dataitem.userName != loggedInUserName" [ngIfElse]="elseBlock">
-      <div class="chat-message-left">
+      <div class="chat-message-left" id="{{ 'wave' + i }}">
         <div class="chat-username-left">
           {{dataitem.userName}}
         </div>
@@ -22,7 +25,7 @@
       </div>
     </ng-template>
     <ng-template #elseBlock>
-      <div class="chat-message-right">
+      <div class="chat-message-right" id="{{ 'wave' + i }}">
         {{dataitem.message}}
         <div class="chat-timestamp-right">
           {{dataitem.messageDateTime}}

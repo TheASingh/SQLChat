@@ -91,6 +91,14 @@ namespace ChatApplicationWithSQLServer.Repositories
 					}
 
 				}
+				else
+				{
+					apiResult = new ApiResult()
+					{
+						Success = false,
+						Error = "Invalid Username/password"
+					};
+				}
 				return apiResult;
 			}
 			catch (Exception e)
@@ -181,7 +189,7 @@ namespace ChatApplicationWithSQLServer.Repositories
 				//smtp.Host = "smtp.gmail.com"; //for gmail host  
 				smtp.EnableSsl = true;
 				smtp.UseDefaultCredentials = false;
-				smtp.Credentials = new NetworkCredential("18instantdebate@gmail.com", "anebtahrxacbtsqo");
+				smtp.Credentials = new NetworkCredential("18instantdebate@gmail.com", "uqgizcemkxkhvoap");
 				smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 				smtp.Send(message);
 			}
@@ -218,7 +226,7 @@ namespace ChatApplicationWithSQLServer.Repositories
 					//smtp.Host = "smtp.gmail.com"; //for gmail host  
 					smtp.EnableSsl = true;
 					smtp.UseDefaultCredentials = false;
-					smtp.Credentials = new NetworkCredential("18instantdebate@gmail.com", "anebtahrxacbtsqo");
+					smtp.Credentials = new NetworkCredential("18instantdebate@gmail.com", "uqgizcemkxkhvoap");
 					smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
 					smtp.Send(message);
 
@@ -234,6 +242,8 @@ namespace ChatApplicationWithSQLServer.Repositories
 			catch (Exception e)
 			{
 				var ex = e;
+				apiResult.Success = false;
+				apiResult.Error = "Invalid email";
 			}
 
 			return apiResult;

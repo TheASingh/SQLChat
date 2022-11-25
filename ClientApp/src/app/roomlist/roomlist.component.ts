@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ChatapplicationServiceService } from '../chatapplicationservice.service';
@@ -17,28 +17,44 @@ export class RoomlistComponent implements OnInit {
   loggedInUserEmail: string = '';
   roomListToDisplay: any = [];
   displayedColumns: string[] = ['roomName'];
+  userId: any = null;
+  showRoomListProgressBar: boolean= true;
 
   constructor(private router: Router, private http: HttpClient, private authService: ChatapplicationServiceService, _snackBar: MatSnackBar) {
-    
 
     snackBar = _snackBar;
+   
+    if (localStorage.getItem('CurrentUser')) {
+      this.userId = JSON.parse(localStorage.CurrentUser).userId;
+    }
   }
 
   ngOnInit(): void {
-    this.getRoomList();
+    
+    setTimeout(() => this.getRoomList(), 500);
+
+    // using ! operator to let compiler know that the object is not undefined
+    this.authService.hubConnection!.on("SendToRoomListComponent", (data) => {
+      
+      this.getRoomList();
+    });
+   
   }
 
 
   getRoomList() {
-    var urlToGetRooms = this.authService.baseApiUrl + this.authService.getRooms_endpoint;
-    this.http.get<any>(urlToGetRooms).subscribe(data => {
-      this.roomListToDisplay = data;
-    }) 
     
+    var urlToGetRooms = this.authService.baseApiUrl + this.authService.getRooms_endpoint;
+    let parameters = new HttpParams().set("userId", this.userId);
+    this.http.get<any>(urlToGetRooms, { params: parameters }).subscribe(res => {
+      this.showRoomListProgressBar = false;
+      this.roomListToDisplay = res.data;
+    })
+
   }
 
   addRoom(roomListForm: any) {
-    
+
 
   }
 

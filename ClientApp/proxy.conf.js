@@ -9,7 +9,8 @@ const PROXY_CONFIG = [
       "/weatherforecast",
       "/user",
       "/room",
-      "/chat"
+      "/chat",
+      "/userroom"
    ],
     target: target,
     secure: false,

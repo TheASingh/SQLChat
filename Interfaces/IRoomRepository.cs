@@ -6,6 +6,8 @@ namespace ChatApplicationWithSQLServer.Interfaces
     public interface IRoomRepository
     {
         bool CreateRoom(string roomName);
-        List<Room> GetRoomList();
-    }
+        List<RoomModel> GetRoomList();
+        ApiResult GetUserRoomDetail(int userId);
+
+	}
 }

@@ -7,15 +7,23 @@ namespace ChatApplicationWithSQLServer.Repositories
 	{
 		//private ChatApplicationDBContext _chatApplicationDBContext;
 		private IChatRepository chatRepository;
-		public EchoHub(IChatRepository _chatRepository)
+		private IRoomRepository roomRepository;
+		public EchoHub(IChatRepository _chatRepository, IRoomRepository _roomRepository)
 		{
 			chatRepository = _chatRepository;
+			roomRepository = _roomRepository;
 		}
 
 		public void Echo(int roomId)
 		{
 			var chatDataListToReturn = chatRepository.GetMessages(roomId);
 			Clients.All.SendAsync("SendToHomeController", chatDataListToReturn);
+
+
+			// updating room-badges
+			// RoomList method requires userId to fetch data for a particular user.
+			// so just triggering the method in front-end
+			Clients.All.SendAsync("SendToRoomListComponent", true);
 		}
 	}
 }

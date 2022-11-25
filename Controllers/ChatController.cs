@@ -27,9 +27,9 @@ namespace ChatApplicationWithSQLServer.Controllers
 
 		[EnableCors]
 		[HttpGet("getmessages")]
-		public IActionResult GetMessages(int roomId)
+		public IActionResult GetMessages(int roomId, int userId)
 		{
-			var result = chatRepository.GetMessages(roomId);
+			var result = chatRepository.GetMessages(roomId, userId);
 			return Ok(result);
 		}
 

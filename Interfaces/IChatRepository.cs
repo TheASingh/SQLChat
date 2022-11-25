@@ -5,6 +5,6 @@ namespace ChatApplicationWithSQLServer.Interfaces
 	public interface IChatRepository
 	{
 		bool SendMessage(ReceivedMessageModel receivedMessageModel);
-		List<ChatModel> GetMessages(int roomId);
+		ChatModel GetMessages(int roomId, int? userId = null);
 	}
 }

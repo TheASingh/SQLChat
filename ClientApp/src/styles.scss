@@ -59,6 +59,15 @@ input[type=text]:focus-visible {
   outline: none;
 }
 
+a {
+  @include generate-theme-vars($dark-theme); // it is required
+  color: var(--accent-color, black);
+  display: inline-block;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+
 /* Simple CSS3 Fade-in Animation */
 .underlineHover:after {
   @include generate-theme-vars($dark-theme); // it is required
@@ -67,13 +76,14 @@ input[type=text]:focus-visible {
   bottom: -10px;
   width: 0;
   height: 2px;
-  background-color: var(--primary-color, blue); // it is for underlining
+  background-color: var(--accent-color, blue); // it is for underlining
   content: "";
   transition: width 0.2s;
 }
 
 .underlineHover:hover {
-  color: #0d0d0d;
+  @include generate-theme-vars($dark-theme); // it is required
+  color: var(--primary-color, black)
 }
 
 .underlineHover:hover:after {
@@ -162,4 +172,15 @@ html, body {
 
 body {
   overflow: hidden; /* Hide scrollbars */
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
 }

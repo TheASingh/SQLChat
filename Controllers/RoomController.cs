@@ -26,11 +26,11 @@ namespace ChatApplicationWithSQLServer.Controllers
 
         [EnableCors]
         [HttpGet("getrooms")]
-        public IActionResult GetRooms()
+        public IActionResult GetRooms(int userId)
         {
             try
             {
-                var result = roomRepository.GetRoomList();
+                var result = roomRepository.GetUserRoomDetail(userId);
 
                 return Ok(result);
             }

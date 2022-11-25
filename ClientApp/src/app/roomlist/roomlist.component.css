@@ -25,3 +25,8 @@
   box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
   text-align: center;
 }
+
+.mat-card{
+  margin-right:2%;
+  margin-left:auto
+}

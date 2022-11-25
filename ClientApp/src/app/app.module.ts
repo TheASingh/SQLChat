@@ -21,8 +21,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatBadgeModule } from '@angular/material/badge';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { VerifyemailComponent } from './verifyemail/verifyemail.component';
 import { ForgotpassworduserentryComponent } from './forgotpassworduserentry/forgotpassworduserentry.component';
@@ -55,6 +57,8 @@ import { ForgotpassworduserentryComponent } from './forgotpassworduserentry/forg
     MatProgressSpinnerModule,
     MatSortModule,
     MatSnackBarModule,
+    MatBadgeModule,
+    MatProgressBarModule,
     MatSidenavModule,
     MatDialogModule
   ],

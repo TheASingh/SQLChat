@@ -2,8 +2,15 @@
 {
 	public class ChatModel
 	{
-		public int Id { get; set; }
 		public int RoomId { get; set; }
+		public int? LoggedInUserId { get; set; }
+		public DateTime? LoggedInUserLastSeen { get; set; }
+		public List<MessageDetail> Messages { get; set; }
+	}
+
+	public class MessageDetail
+	{
+		public int Id { get; set; }
 		public string UserName { get; set; }
 		public string? Message { get; set; }
 		public DateTime Timestamp { get; set; }

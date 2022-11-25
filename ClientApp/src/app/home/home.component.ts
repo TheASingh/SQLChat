@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.scss']
 })
 
 
@@ -21,6 +21,8 @@ export class HomeComponent implements OnInit {
   routerForNavigatingToOtherComponents: any;
   emailToResetPasswordFor: any;
   showLogInWindow: boolean = true;
+  showLogInProgressBar: boolean = false;
+  showSignUpProgressBar: boolean = false;
   public message: string = "";
   public messages: string[] = [];
 
@@ -33,17 +35,40 @@ export class HomeComponent implements OnInit {
     public dialog: MatDialog
   ) {
     this.routerForNavigatingToOtherComponents = this._router;
+
+    // There are two ways:
+
+    // 1. Either by declaring a BehaviorSubject or Subject and make it Observable (check commented code in service file)
+    // definition: BehaviorSubject or Subject acts as Observer as well as Observable.
+    //  a. Observer means, we can set a value to it using next() method.
+    //  b. Observable means, we can subscribe to it
+    //this.authService.showLogInLoadingObservable.subscribe(res => {
+    //  this.showLogInProgressBar = res;
+    //});
+
+    // 2. Diretly use BehaviorSubject or Subject
+
+    this.authService.showLogInLoadingSubject.subscribe(res => {
+      this.showLogInProgressBar = res;
+    });
+
+    this.authService.showSignUpLoadingBehaviorSubject.subscribe(res => {
+      this.showSignUpProgressBar = res;
+    })
+    
+
   }
 
   ngOnInit(): void {
   }
 
   onLogInClick(value: any) {
+    
     this.authService.login(value.email, value.password);
   }
 
   onRegisterClick(value: any) {
-    this.authService.signup(value.usernameForRegistration ,value.emailForRegistration, value.passwordForRegistration);
+    this.authService.signup(value.usernameForRegistration, value.emailForRegistration, value.passwordForRegistration);
   }
 
   openForgotPasswordDialog() {
