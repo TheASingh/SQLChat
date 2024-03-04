@@ -1,0 +1,10 @@
+ <Target Name="CopyOutputToBin" AfterTargets="Build">
+
+    <PropertyGroup>
+      <CopyCommand Condition="'$(TeamBuildOutDir)' == ''">copy</CopyCommand>
+      <CopyCommand Condition="'$(TeamBuildOutDir)' != ''">xcopy /Q /Y /D</CopyCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(CopyCommand) &quot;$(TargetDir)*.*&quot; &quot;$(SolutionDir)bin\&quot;" />
+
+  </Target>
